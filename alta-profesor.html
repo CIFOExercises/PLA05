@@ -25,22 +25,22 @@
                     <div class="form-body">
                         <div>
                             <label for="firstName">Nom: </label>
-                            <input id="firstName" name="firstName" type="text">
+                            <input id="firstName" name="firstName" type="text" required>
                         </div>
 
                         <div>
                             <label for="user">Usuari: </label>
-                            <input id="user" name="user" type="text">
+                            <input id="user" name="user" type="text" required>
                         </div>
 
                         <div>
                             <label for="email">Email: </label>
-                            <input id="email" name="email" type="email" pattern="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$">
+                            <input id="email" name="email" type="email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" required>
                         </div>
 
                         <div>
                             <label for="password">Password: </label>
-                            <input id="password" name="password" type="password">
+                            <input id="password" name="password" type="password" required>
                         </div>
                     </div>
 
