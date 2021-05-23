@@ -16,54 +16,66 @@
 
 // Recoger la respuesta y evaluarla para mostrar una alerta con el resultado de la peticion
 
-let form = document.forms.namedItem('alta-profesor');
+let form = document.forms.namedItem("alta-profesor");
 form.onsubmit = handleRequest;
 
 function handleRequest(e) {
-    e.preventDefault();
-    
-    let isValid = validateForm();
-    
-    if(!isValid) return;
-  
-    let data = {
-      'nombre': form.firstName.value,
-      'usuario': form.user.value,
-      'email': form.email.value,
-      'password': form.password.value      
+  e.preventDefault();
+
+  let isValid = validateForm();
+  if (!isValid) return;
+
+  console.log("Ha pasado la validacion");
+
+  let data = new FormData();
+  data.append("nombre", form.firstName.value);
+  data.append("usuario", form.user.value);
+  data.append("email", form.email.value);
+  data.append("password", form.password.value);
+
+  //Enviar Peticion al servidor: https://alcyon-it.com/PQTM/pqtm_alta_profesores.php
+  sendRequest(data);
+}
+
+function validateForm() {
+  if (form.checkValidity()) {
+    if (
+      !form.firstName.value ||
+      !form.user.value ||
+      !form.email.value ||
+      !form.password.value
+    ) {
+      console.log("hay almenos un campo que no esta informado");
+      return false;
     }
 
-    //Enviar Peticion al servidor: https://alcyon-it.com/PQTM/pqtm_alta_profesores.php
-    sendRequest(data);
+    let regex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/g;
+    if (!regex.test(form.email.value)) {
+      form.email.setCustomValidity("El email no tiene el formato correcto");
+      form.reportValidity();
+      return false;
+    }
+  } else {
+    form.reportValidity();
+    return false;
+  }
+  return true;
 }
 
-function validateForm(){
-    //Validar inputs
-    let validatedName = validateInput(form.firstName);
-    let validatedUser = validateInput(form.user);
-    let validatedEmail = validateInput(form.email);
-    let validatedPassword = validateInput(form.password);
-    
-    if (!validatedName || !validatedUser || !validatedEmail || !validatedPassword) return false;
-}
+function sendRequest(data) {
+  let headers = {
+    method: "POST",
+    body: data
+  };
 
-function validateInput(input){
-	if (!input.value) {
-        console.log(input.value)
-		input.setCustomValidity('El campo debe estar informado');
-        return false;
-	} else {
-        if(input.type == 'email'){
-            let regex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/g;
-            if(!input.value.match(regex)) input.input.setCustomValidity('El email no tiene el formato correcto');
-            console.log(regex.test(input.value))
-            return false;
-        }
-        input.setCustomValidity("");
-        return true;
-	}
-}
-
-function sendRequest({name, user, email, password}){
-    
+  fetch("https://alcyon-it.com/PQTM/pqtm_alta_profesores.php", headers)
+    .then((res) => {
+      if (res.ok) {
+        return res.text();
+      } else {
+        throw "Algo ha ido mal en la llamada";
+      }
+    })
+    .then((msg) => alert(msg))
+    .catch((err) => alert(err));
 }
